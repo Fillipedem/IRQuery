@@ -69,10 +69,3 @@ class ReverseIndex:
                                         # aparece no documento
 
         return ds
-
-
-###       ###
-### Teste ###
-###       ###
-local_path = './indexes/advanced_reverse_index_dict.json'
-ReverseIndex(local_path)

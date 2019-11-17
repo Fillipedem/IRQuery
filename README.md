@@ -7,6 +7,11 @@ Para rodar o servidor flask:
 terminal: python3 app.py
 
 ---------------------------------------------------------------
+Dependências:
+
+numpy flask json
+
+---------------------------------------------------------------
 
 Exemplos de algumas consultas na interface:
 
@@ -26,5 +31,5 @@ genre
 description
 dev
 pub
-req_min
-req_max
+Req_min
+Req_max

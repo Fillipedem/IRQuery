@@ -10,6 +10,38 @@ class Score:
         self.index = index
         self.lengths = {}
 
+        self.__initialize_lengths()
+
+
+    def __term_score(self, tf, df, num_docs):
+
+        idf = np.log(num_docs / df)
+
+        return tf*idf
+
+    def __initialize_lengths(self):
+        # num de documentos
+        N = self.index.collection_size
+
+        # inicializando o vetor de pesos dos documentos para zero
+        vectors = {}
+        for docID in self.index.documents():
+            vectors[docID] = np.zeros(len(self.index.terms()))
+
+        # Para cada termo calculamos o valor tfidf de cada documento
+        for idx, term in enumerate(self.index.terms()):
+
+            posting_list = self.index.posting(term)
+            df = len(posting_list)
+            for posting in posting_list:
+                docID = posting['id']
+                fr = posting['frequency']/self.index.documents_size[docID]
+
+                vectors[docID][idx] = self.__term_score(fr, df, N)
+
+        for docID in self.index.documents():
+            self.lengths[docID] = np.linalg.norm(vectors[docID])
+
 
     def cosine_score(self, query):
         """
@@ -17,11 +49,9 @@ class Score:
         """
         N = self.index.collection_size
         scores = {}
-        lengths = {} #TODO
 
-        for docID in self.index.documents_size:
+        for docID in self.index.documents():
             scores[docID] = 0
-            self.lengths[docID] = 1
 
         # para cada termo da query - Term-At-Time
         for term in query.terms:
@@ -35,13 +65,13 @@ class Score:
             # calcular o peso do termo
             fr = query.terms[term]
             df =  len(posting_list)
-            qweight = self.term_score(fr, df, N)
+            qweight = self.__term_score(fr, df, N)
 
             for posting in posting_list:
                 docID = posting['id']
-                doc_fr = posting['frequency']
+                doc_fr = posting['frequency']/self.index.documents_size[docID]
 
-                dweight = self.term_score(doc_fr, df, N)
+                dweight = self.__term_score(doc_fr, df, N)
 
                 scores[docID] += dweight*qweight
 
@@ -52,9 +82,3 @@ class Score:
         top20 = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)[:20]
 
         return top20
-
-    def term_score(self, tf, df, num_docs):
-
-        idf = np.log(num_docs / df)
-
-        return tf*idf

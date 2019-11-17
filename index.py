@@ -14,6 +14,30 @@ class ReverseIndex:
         self.collection_size = len(self.documents_size)
 
 
+    def posting(self, term):
+        """
+        Retorna a posting_list do termo
+        returns: list [('id': 12, 'frequency': 1), ...]
+        """
+        if term not in self.index:
+            return []
+
+        return self.index[term]
+
+
+    def terms(self):
+        """
+        Retorna uma lista de todos os termos
+        """
+        return self.index.keys()
+
+    def documents(self):
+        """
+        Retorna uma lista com todos docID
+        """
+        return self.documents_size.keys()
+
+
     def __load_index(self, local_path):
         """
         Ler o arquivo em Json do index
@@ -45,18 +69,6 @@ class ReverseIndex:
                                         # aparece no documento
 
         return ds
-
-
-    def posting(self, term):
-        """
-        Retorna a posting_list do termo
-        returns: list [('id': 12, 'frequency': 1), ...]
-        """
-        if term not in self.index:
-            return []
-
-        return self.index[term]
-
 
 
 ###       ###

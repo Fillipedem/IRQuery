@@ -1,4 +1,4 @@
-from score import Score
+from score import CosineScore
 from index import ReverseIndex
 from query import Query, ZoneQuery
 
@@ -17,8 +17,8 @@ query_text2 = {'title': 'the witcher', 'description':
 query2 = ZoneQuery(query_text2)
 
 # score
-score = Score(index)
+score = CosineScore(index)
 
 #
-scores = score.cosine_score(query)
-scores2 = score.cosine_score(query2)
+scores = score.score(query)
+scores2 = score.score(query2)

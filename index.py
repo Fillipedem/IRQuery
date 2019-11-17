@@ -14,7 +14,7 @@ class ReverseIndex:
         self.collection_size = len(self.documents_size)
 
 
-    def posting(self, term):
+    def posting_list(self, term):
         """
         Retorna a posting_list do termo
         returns: list [('id': 12, 'frequency': 1), ...]

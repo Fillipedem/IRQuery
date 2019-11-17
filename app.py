@@ -3,7 +3,7 @@ Servidor Flask para respostas no indice
 """
 from flask import Flask, request
 from query import Query, ZoneQuery
-from score import Score
+from score import CosineScore
 from index import ReverseIndex
 
 #index
@@ -17,8 +17,8 @@ index = ReverseIndex(index_path)
 zone_index = ReverseIndex(zone_index_path)
 
 # score function
-index_score = Score(index)
-advanced_score = Score(zone_index)
+index_score = CosineScore(index)
+advanced_score = CosineScore(zone_index)
 
 # Flask interface
 app = Flask(__name__)
@@ -28,7 +28,7 @@ app = Flask(__name__)
 def search():
     free_text = request.args.get('text', default = '*', type = str)
     query = Query(free_text)
-    scores = index_score.cosine_score(query)
+    scores = index_score.score(query)
 
     return str(scores)
 
@@ -40,7 +40,7 @@ def advanced_search():
         return ""
 
     query = ZoneQuery(parameters)
-    scores = advanced_score.cosine_score(query)
+    scores = advanced_score.score(query)
 
     return str(scores)
 

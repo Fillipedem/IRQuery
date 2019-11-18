@@ -1,7 +1,7 @@
 from score import CosineScore
 from index import ReverseIndex
 from query import Query, ZoneQuery
-
+from rank_correlation import spearman
 
 # primeiro lendo o index
 local_path = './indexes/advanced_reverse_index_dict.json'

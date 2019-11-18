@@ -5,7 +5,10 @@ import numpy as np
 
 
 class Score:
-
+    """
+    Interface para class que computa scores
+    dado um Index e uma Query
+    """
     def __init__(self, index):
         pass
 
@@ -102,3 +105,78 @@ class CosineScore(Score):
         top20 = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)[:20]
 
         return top20
+
+
+class BIMScore(Score):
+    """
+    Simple Binary Independent Model
+
+    #Considerando Pt = 1/2 (Probabilidade do termo aparecer no doc
+                            Relevante ou não relevante é igual)
+    Logo o valor do rank é a soma dos idfs dos termos
+    que aparecem nos documentos
+    """
+
+    def __init__(self, index):
+        self.index = index
+
+
+    def score(self, query):
+        """
+        Retorna os top 20 com maiores ranks para a query
+        """
+        return self.__bim_score(query)
+
+
+    def __idf(self, df, num_docs):
+        """
+        Calcula o valor idf para o termo
+        """
+        idf = np.log(num_docs / df)
+
+        return idf
+
+
+    def __bim_score(query):
+
+        N = self.index.collection_size
+        scores = {}
+
+        for docID in self.index.documents():
+            scores[docID] = 0
+
+        # 'Term-At-Time' BIM
+        for term in query.terms():
+            # posting_list
+            posting_list = self.index.posting_list()
+            # calculando o idf do termo
+            df = len(posting_list)
+            idf = self.__idf(df, N)
+
+            for posting in posting_list:
+                docID = posting['id']
+                scores[docID] += idf
+
+        return scores
+
+
+class ZoneScore(Score):
+
+
+    def __init__(self, index):
+        self.index = index
+
+
+    def score(self, query):
+        """
+        Retorna os top 20 com maiores ranks para a query
+        """
+        return self.__zone_score(query)
+
+    def __zone_score(self, query):
+        pass
+        #TODO
+
+###
+###
+###

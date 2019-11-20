@@ -9,7 +9,7 @@ from index import ReverseIndex
 #index
 print("Lendo Indices")
 
-index_path = './indexes/single_term_index_dict.json'
+index_path = './indexes/new_single_index.json'
 zone_index_path = './indexes/advanced_reverse_index_dict.json'
 
 # index
@@ -29,7 +29,7 @@ def search():
     free_text = request.args.get('text', default = '*', type = str)
     query = Query(free_text)
     scores = index_score.score(query)
-    
+
     return str(scores)
 
 @app.route('/advanced_search')

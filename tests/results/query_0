@@ -1,0 +1,10 @@
+the witcher blood and wine
+BIM rank: 
+[5207, 5266, 5306, 6485, 6867, 604, 708, 999, 5919, 5960]
+Cosine rank
+[708, 5919, 5207, 5266, 5306, 5960, 2698, 6080, 999, 604]
+Boolean rank
+[5207, 5266, 5306, 6485, 6867, 286, 2406, 2433, 2431, 2708]
+Correlação BIM/Cosine: 0.07692307692307687
+Correlação BIM/Vector: 0.5178571428571428
+Correlação Cosine/Vector: -0.19362745098039214

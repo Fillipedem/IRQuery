@@ -29,8 +29,8 @@ def search():
     free_text = request.args.get('text', default = '*', type = str)
     query = Query(free_text)
     scores = index_score.score(query)
-    
-    return str(scores)
+
+    return str(scores[:20])
 
 @app.route('/advanced_search')
 def advanced_search():
@@ -42,7 +42,7 @@ def advanced_search():
     query = ZoneQuery(parameters)
     scores = advanced_score.score(query)
 
-    return str(scores)
+    return str(scores[:20])
 
 
 def valid_params(params):

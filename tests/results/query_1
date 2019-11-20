@@ -1,0 +1,10 @@
+batman arkham
+BIM rank:
+[75, 275, 672, 955, 6425, 72, 76, 994, 210, 4923]
+Cosine rank
+[75, 672, 275, 72, 76, 6425, 955, 994, 210, 5910]
+Boolean rank
+[4923, 4949, 5456, 1580, 210, 5910, 75, 672, 275, 76]
+Correlação BIM/Cosine: 0.9
+Correlação BIM/Vector: -0.5956043956043957
+Correlação Cosine/Vector: -0.6395604395604395

@@ -101,10 +101,83 @@ class CosineScore(Score):
             for docID in scores:
                 scores[docID] /= self.lengths[docID]
 
-        # agora apenas selecionando os top20
-        top20 = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)[:20]
 
-        return top20
+        top_scores = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)
+
+        return top_scores
+
+
+class VectorScore(Score):
+
+    def __init__(self, index):
+        self.index = index
+        self.lengths = {}
+
+        self.__initialize_lengths()
+
+
+    def score(self, query):
+        """
+        Retorna os top 20 com maiores ranks para a query
+        """
+        return self.__vector_score(query)
+
+
+    def __initialize_lengths(self):
+        # num de documentos
+        docIDs = self.index.documents()
+        N = len(docIDs)
+
+        # inicializando o vetor de pesos dos documentos para zero
+        vectors = {}
+        for docID in docIDs:
+            vectors[docID] = np.zeros(len(self.index.terms()))
+
+        for idx, term in enumerate(self.index.terms()):
+
+            posting_list = self.index.posting_list(term)
+
+            for posting in posting_list:
+                docID = posting['id']
+
+                vectors[docID][idx] = 1
+
+        for docID in docIDs:
+            self.lengths[docID] = np.linalg.norm(vectors[docID])
+
+
+    def __vector_score(self, query):
+        """
+        Retorna os top 20 com maiores ranks para a query com base
+        na similariedade do coseno
+        """
+        N = self.index.collection_size
+        scores = {}
+
+        for docID in self.index.documents():
+            scores[docID] = 0
+
+        # para cada termo da query - Term-At-Time
+        for term in query.terms:
+            # retrieve posting list
+            posting_list = self.index.posting_list(term)
+
+            # se o termo não existir no vocab
+            if not posting_list:
+                continue
+
+            for posting in posting_list:
+                docID = posting['id']
+
+                scores[docID] += 1
+
+            for docID in scores:
+                scores[docID] /= self.lengths[docID]
+
+
+        top_scores = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)
+
+        return top_scores
 
 
 class BIMScore(Score):
@@ -137,7 +210,7 @@ class BIMScore(Score):
         return idf
 
 
-    def __bim_score(query):
+    def __bim_score(self, query):
 
         N = self.index.collection_size
         scores = {}
@@ -146,9 +219,13 @@ class BIMScore(Score):
             scores[docID] = 0
 
         # 'Term-At-Time' BIM
-        for term in query.terms():
+        for term in query.terms:
             # posting_list
-            posting_list = self.index.posting_list()
+            posting_list = self.index.posting_list(term)
+
+            if not posting_list:
+                continue
+
             # calculando o idf do termo
             df = len(posting_list)
             idf = self.__idf(df, N)
@@ -157,7 +234,9 @@ class BIMScore(Score):
                 docID = posting['id']
                 scores[docID] += idf
 
-        return scores
+        top_scores = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)
+
+        return top_scores
 
 
 class ZoneScore(Score):
